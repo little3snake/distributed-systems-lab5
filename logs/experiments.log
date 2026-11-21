@@ -1,0 +1,137 @@
+ * Serving Flask app 'catalog_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5002
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:15] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:15.200980+00:00 [demo] Started replica, PID=24936, arguments=()
+ * Serving Flask app 'catalog_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5001
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:16] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:16.470794+00:00 [demo] Started primary, PID=28076, arguments=()
+Catalog endpoints: {'primary': 'http://127.0.0.1:5001', 'replica': 'http://127.0.0.1:5002'}; timeout: 1.00s
+ * Serving Flask app 'orders_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5003
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:17] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:17.307433+00:00 [demo] Started orders, PID=20900, arguments=()
+127.0.0.1 - - [14/Nov/2026 08:00:17] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:17.326399+00:00 [demo] Primary health: HTTP 200, 0.016s {"role":"primary","service":"catalog","status":"ok"}
+127.0.0.1 - - [14/Nov/2026 08:00:17] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:17.330396+00:00 [demo] Replica health: HTTP 200, 0.000s {"role":"replica","service":"catalog","status":"ok"}
+2026-11-14T05:00:17.355487+00:00 [primary] stored product 1 v2, mode=sync
+2026-11-14T05:00:17.361608+00:00 [replica] applied product 1 v2, returning ACK
+127.0.0.1 - - [14/Nov/2026 08:00:17] "PUT /replication/products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:17.362607+00:00 [primary] received ACK for product 1 v2
+2026-11-14T05:00:17.362607+00:00 [primary] returning SUCCESS for product 1 v2, mode=sync
+127.0.0.1 - - [14/Nov/2026 08:00:17] "PUT /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:17.363609+00:00 [demo] Synchronize baseline 450000/v2: HTTP 200, 0.031s {"product":{"id":1,"name":"Laptop","price":450000,"stock":10,"version":2},"status":"SUCCESS"}
+2026-11-14T05:00:17.363609+00:00 [demo] EXPERIMENT 1: normal operation
+127.0.0.1 - - [14/Nov/2026 08:00:17] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:17.372607+00:00 [orders] read product 1 from primary, version=2
+127.0.0.1 - - [14/Nov/2026 08:00:17] "POST /orders HTTP/1.1" 201 -
+2026-11-14T05:00:17.374609+00:00 [demo] Create order: HTTP 201, 0.016s {"catalog_source":"primary","catalog_version":2,"created_at":"2026-11-14T05:00:17.372607+00:00","id":1,"name":"Laptop","order_id":1,"price":450000,"product_id":1,"quantity":1,"stock":10,"total":450000,"version":2}
+2026-11-14T05:00:17.374609+00:00 [demo] PASS experiment 1
+2026-11-14T05:00:17.374609+00:00 [demo] EXPERIMENT 2: primary stopped
+2026-11-14T05:00:17.382607+00:00 [demo] Stopped primary, PID=28076
+2026-11-14T05:00:18.408581+00:00 [orders] primary request failed: ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD6C320>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')); falling back to replica
+127.0.0.1 - - [14/Nov/2026 08:00:18] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:18.425560+00:00 [orders] read product 1 from replica, version=2
+127.0.0.1 - - [14/Nov/2026 08:00:18] "POST /orders HTTP/1.1" 201 -
+2026-11-14T05:00:18.426562+00:00 [demo] Create order: HTTP 201, 1.032s {"catalog_source":"replica","catalog_version":2,"created_at":"2026-11-14T05:00:18.425560+00:00","id":2,"name":"Laptop","order_id":2,"price":450000,"product_id":1,"quantity":1,"stock":10,"total":450000,"version":2}
+2026-11-14T05:00:18.426562+00:00 [demo] PASS experiment 2
+2026-11-14T05:00:18.426562+00:00 [demo] EXPERIMENT 3: recovery
+ * Serving Flask app 'catalog_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5001
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:19] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:19.245325+00:00 [demo] Started primary, PID=2816, arguments=()
+2026-11-14T05:00:19.265479+00:00 [primary] stored product 1 v2, mode=sync
+2026-11-14T05:00:19.281484+00:00 [replica] applied product 1 v2, returning ACK
+127.0.0.1 - - [14/Nov/2026 08:00:19] "PUT /replication/products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:19.282480+00:00 [primary] received ACK for product 1 v2
+2026-11-14T05:00:19.282480+00:00 [primary] returning SUCCESS for product 1 v2, mode=sync
+127.0.0.1 - - [14/Nov/2026 08:00:19] "PUT /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:19.283481+00:00 [demo] Synchronize baseline 450000/v2: HTTP 200, 0.031s {"product":{"id":1,"name":"Laptop","price":450000,"stock":10,"version":2},"status":"SUCCESS"}
+127.0.0.1 - - [14/Nov/2026 08:00:19] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:19.315159+00:00 [orders] read product 1 from primary, version=2
+127.0.0.1 - - [14/Nov/2026 08:00:19] "POST /orders HTTP/1.1" 201 -
+2026-11-14T05:00:19.317165+00:00 [demo] Create order: HTTP 201, 0.031s {"catalog_source":"primary","catalog_version":2,"created_at":"2026-11-14T05:00:19.315159+00:00","id":3,"name":"Laptop","order_id":3,"price":450000,"product_id":1,"quantity":1,"stock":10,"total":450000,"version":2}
+2026-11-14T05:00:19.317165+00:00 [demo] PASS experiment 3
+2026-11-14T05:00:19.317165+00:00 [demo] EXPERIMENT 4: running primary, response delay 3s, Order timeout 1s
+2026-11-14T05:00:19.330097+00:00 [demo] Stopped primary, PID=2816
+ * Serving Flask app 'catalog_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5001
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:20] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:20.152019+00:00 [demo] Started primary, PID=25100, arguments=('--response-delay', '3')
+2026-11-14T05:00:20.155502+00:00 [primary] stored product 1 v2, mode=sync
+2026-11-14T05:00:20.159645+00:00 [replica] applied product 1 v2, returning ACK
+127.0.0.1 - - [14/Nov/2026 08:00:20] "PUT /replication/products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:20.160643+00:00 [primary] received ACK for product 1 v2
+2026-11-14T05:00:20.160643+00:00 [primary] returning SUCCESS for product 1 v2, mode=sync
+127.0.0.1 - - [14/Nov/2026 08:00:20] "PUT /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:20.161643+00:00 [demo] Synchronize baseline 450000/v2: HTTP 200, 0.000s {"product":{"id":1,"name":"Laptop","price":450000,"stock":10,"version":2},"status":"SUCCESS"}
+2026-11-14T05:00:20.185643+00:00 [primary] delaying product read by 3.0s (primary is running)
+2026-11-14T05:00:21.196839+00:00 [orders] primary request failed: ReadTimeout: HTTPConnectionPool(host='127.0.0.1', port=5001): Read timed out. (read timeout=1.0); falling back to replica
+127.0.0.1 - - [14/Nov/2026 08:00:21] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:21.215208+00:00 [orders] read product 1 from replica, version=2
+127.0.0.1 - - [14/Nov/2026 08:00:21] "POST /orders HTTP/1.1" 201 -
+2026-11-14T05:00:21.216203+00:00 [demo] Create order: HTTP 201, 1.047s {"catalog_source":"replica","catalog_version":2,"created_at":"2026-11-14T05:00:21.215208+00:00","id":4,"name":"Laptop","order_id":4,"price":450000,"product_id":1,"quantity":1,"stock":10,"total":450000,"version":2}
+127.0.0.1 - - [14/Nov/2026 08:00:21] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:21.221204+00:00 [demo] Primary is still alive: HTTP 200, 0.000s {"role":"primary","service":"catalog","status":"ok"}
+2026-11-14T05:00:21.224203+00:00 [primary] delaying product read by 3.0s (primary is running)
+127.0.0.1 - - [14/Nov/2026 08:00:23] "GET /products/1 HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2026 08:00:24] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:24.226853+00:00 [demo] Direct primary read completes after 3s: HTTP 200, 3.015s {"id":1,"name":"Laptop","price":450000,"stock":10,"version":2}
+2026-11-14T05:00:24.226853+00:00 [demo] PASS experiment 4: timeout creates suspicion, not proof of a stopped service
+2026-11-14T05:00:24.226853+00:00 [demo] EXPERIMENT 5: async replication delay 5s
+2026-11-14T05:00:24.233946+00:00 [demo] Stopped primary, PID=25100
+ * Serving Flask app 'catalog_service'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5001
+Press CTRL+C to quit
+127.0.0.1 - - [14/Nov/2026 08:00:25] "GET /health HTTP/1.1" 200 -
+2026-11-14T05:00:25.506642+00:00 [demo] Started primary, PID=8140, arguments=('--replication-delay', '5')
+2026-11-14T05:00:25.509625+00:00 [primary] stored product 1 v2, mode=sync
+2026-11-14T05:00:25.536636+00:00 [replica] applied product 1 v2, returning ACK
+127.0.0.1 - - [14/Nov/2026 08:00:25] "PUT /replication/products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:25.537993+00:00 [primary] received ACK for product 1 v2
+2026-11-14T05:00:25.537993+00:00 [primary] returning SUCCESS for product 1 v2, mode=sync
+127.0.0.1 - - [14/Nov/2026 08:00:25] "PUT /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:25.539001+00:00 [demo] Synchronize baseline 450000/v2: HTTP 200, 0.032s {"product":{"id":1,"name":"Laptop","price":450000,"stock":10,"version":2},"status":"SUCCESS"}
+127.0.0.1 - - [14/Nov/2026 08:00:25] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:25.568738+00:00 [demo] Replica before update: HTTP 200, 0.015s {"id":1,"name":"Laptop","price":450000,"stock":10,"version":2}
+2026-11-14T05:00:25.582842+00:00 [primary] stored product 1 v3, mode=async
+2026-11-14T05:00:25.583838+00:00 [primary] returning SUCCESS for product 1 v3, mode=async
+127.0.0.1 - - [14/Nov/2026 08:00:25] "PUT /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:25.584742+00:00 [demo] Primary async price 400000/v3: HTTP 200, 0.032s {"product":{"id":1,"name":"Laptop","price":400000,"stock":10,"version":3},"status":"SUCCESS"}
+2026-11-14T05:00:25.590851+00:00 [demo] Stopped primary, PID=8140
+2026-11-14T05:00:26.625345+00:00 [orders] primary request failed: ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD6F440>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')); falling back to replica
+127.0.0.1 - - [14/Nov/2026 08:00:26] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:26.629533+00:00 [orders] read product 1 from replica, version=2
+127.0.0.1 - - [14/Nov/2026 08:00:26] "POST /orders HTTP/1.1" 201 -
+2026-11-14T05:00:26.630518+00:00 [demo] Create order: HTTP 201, 1.031s {"catalog_source":"replica","catalog_version":2,"created_at":"2026-11-14T05:00:26.629533+00:00","id":5,"name":"Laptop","order_id":5,"price":450000,"product_id":1,"quantity":1,"stock":10,"total":450000,"version":2}
+127.0.0.1 - - [14/Nov/2026 08:00:31] "GET /products/1 HTTP/1.1" 200 -
+2026-11-14T05:00:31.754738+00:00 [demo] Replica still stale after delivery deadline: HTTP 200, 0.016s {"id":1,"name":"Laptop","price":450000,"stock":10,"version":2}
+2026-11-14T05:00:31.754738+00:00 [demo] PASS experiment 5: old price 450000/v2; latest primary price was 400000/v3
+127.0.0.1 - - [14/Nov/2026 08:00:31] "PUT /products/1 HTTP/1.1" 405 -
+2026-11-14T05:00:31.760821+00:00 [demo] Replica rejects client writes: HTTP 405, 0.015s {"error":"Send product updates to the primary"}
+2026-11-14T05:00:31.760821+00:00 [demo] EXTRA CHECK: both catalogs stopped
+2026-11-14T05:00:31.768765+00:00 [demo] Stopped replica, PID=24936
+2026-11-14T05:00:32.780437+00:00 [orders] primary request failed: ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD3BD10>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)')); falling back to replica
+2026-11-14T05:00:33.788684+00:00 [orders] replica request failed: ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5002): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD6CC50>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)'))
+127.0.0.1 - - [14/Nov/2026 08:00:33] "POST /orders HTTP/1.1" 503 -
+2026-11-14T05:00:33.791561+00:00 [demo] No catalogs available: HTTP 503, 2.032s {"error":"Both catalogs are unavailable","failures":{"primary":"ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD3BD10>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)'))","replica":"ConnectTimeout: HTTPConnectionPool(host='127.0.0.1', port=5002): Max retries exceeded with url: /products/1 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001C4BBD6CC50>, 'Connection to 127.0.0.1 timed out. (connect timeout=1.0)'))"}}
+2026-11-14T05:00:33.791561+00:00 [demo] ALL FIVE EXPERIMENTS PASSED; read-only and total-outage checks passed
+2026-11-14T05:00:33.799547+00:00 [demo] Stopped orders, PID=20900
